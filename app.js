@@ -14,12 +14,7 @@ var mkdirSync = function (path) {
   }
 }
 
-var mkdirpSync = function (dirpath) {
-  var parts = dirpath.split(path.sep);
-  for( var i = 1; i <= parts.length; i++ ) {
-    mkdirSync( path.join.apply(null, parts.slice(0, i)) );
-  }
-}
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -38,9 +33,9 @@ app.post('/upload', function(req, res){
   // store all uploads in the /uploads directory
 
   var projectPath = path.join(__dirname, '/uploads/', randomstring.generate());
+  mkdirSync(projectPath)
   form.uploadDir = path.join(projectPath,'/images');
-
-  mkdirpSync(form.uploadDir);
+  mkdirSync(form.uploadDir);
 
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
@@ -56,7 +51,7 @@ app.post('/upload', function(req, res){
   // once all the files have been uploaded, send a response to the client
   form.on('end', function() {
     res.end('success');
-    var child = child_process.spawn('python', ['run.py','--project-path',projectPath]);
+    var child = child_process.spawn('python', ['../run.py','--project-path',projectPath],{ stdio: [0, fs.openSync('std.out','w'), fs.openSync('std.err','w')], env : process.env});
   });
 
   // parse the incoming request containing the form data
