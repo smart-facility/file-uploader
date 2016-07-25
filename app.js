@@ -14,6 +14,13 @@ var mkdirSync = function (path) {
   }
 }
 
+var mkdirpSync = function (dirpath) {
+  var parts = dirpath.split(path.sep);
+  for( var i = 1; i <= parts.length; i++ ) {
+    mkdirSync( path.join.apply(null, parts.slice(0, i)) );
+  }
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res){
@@ -30,9 +37,9 @@ app.post('/upload', function(req, res){
 
   // store all uploads in the /uploads directory
 
-  form.uploadDir = path.join(__dirname, '/uploads/', randomstring.generate());
+  form.uploadDir = path.join(__dirname, '/uploads/', randomstring.generate(), '/images');
 
-  fs.mkdirSync(form.uploadDir);
+  fs.mkdirpSync(form.uploadDir);
 
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
