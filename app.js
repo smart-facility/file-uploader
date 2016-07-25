@@ -6,6 +6,14 @@ var fs = require('fs');
 var child_process = require('child_process');
 var randomstring = require('randomstring');
 
+var mkdirSync = function (path) {
+  try {
+    fs.mkdirSync(path);
+  } catch(e) {
+    if ( e.code != 'EEXIST' ) throw e;
+  }
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res){
@@ -21,7 +29,10 @@ app.post('/upload', function(req, res){
   form.multiples = true;
 
   // store all uploads in the /uploads directory
+
   form.uploadDir = path.join(__dirname, '/uploads/', randomstring.generate());
+
+  fs.mkdirSync(form.uploadDir);
 
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
