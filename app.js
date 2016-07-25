@@ -40,7 +40,7 @@ app.post('/upload', function(req, res){
   var projectPath = path.join(__dirname, '/uploads/', randomstring.generate());
   form.uploadDir = path.join(projectPath,'/images');
 
-  fs.mkdirpSync(form.uploadDir);
+  mkdirpSync(form.uploadDir);
 
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
