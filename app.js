@@ -37,7 +37,8 @@ app.post('/upload', function(req, res){
 
   // store all uploads in the /uploads directory
 
-  form.uploadDir = path.join(__dirname, '/uploads/', randomstring.generate(), '/images');
+  var projectPath = path.join(__dirname, '/uploads/', randomstring.generate());
+  form.uploadDir = path.join(projectPath,'/images');
 
   fs.mkdirpSync(form.uploadDir);
 
@@ -55,7 +56,7 @@ app.post('/upload', function(req, res){
   // once all the files have been uploaded, send a response to the client
   form.on('end', function() {
     res.end('success');
-    var child = child_process.spawn('python', ['run.py','--project-path',form.uploadDir]);
+    var child = child_process.spawn('python', ['run.py','--project-path',projectPath]);
   });
 
   // parse the incoming request containing the form data
