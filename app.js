@@ -3,6 +3,8 @@ var app = express();
 var path = require('path');
 var formidable = require('formidable');
 var fs = require('fs');
+var child_process = require('child_process');
+var randomstring = require('randomstring');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -19,7 +21,7 @@ app.post('/upload', function(req, res){
   form.multiples = true;
 
   // store all uploads in the /uploads directory
-  form.uploadDir = path.join(__dirname, '/uploads');
+  form.uploadDir = path.join(__dirname, '/uploads/', randomstring.generate());
 
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
@@ -35,6 +37,7 @@ app.post('/upload', function(req, res){
   // once all the files have been uploaded, send a response to the client
   form.on('end', function() {
     res.end('success');
+    var child = child_process.spawn('python', ['run.py','--project-path',form.uploadDir]);
   });
 
   // parse the incoming request containing the form data
@@ -42,6 +45,6 @@ app.post('/upload', function(req, res){
 
 });
 
-var server = app.listen(3000, function(){
-  console.log('Server listening on port 3000');
+var server = app.listen(8081, function(){
+  console.log('Server listening on port 8081');
 });
