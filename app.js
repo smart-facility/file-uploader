@@ -4,7 +4,7 @@ var path = require('path');
 var formidable = require('formidable');
 var fs = require('fs');
 var child_process = require('child_process');
-var randomstring = require('randomstring');
+var randomStringGenerator = require('randomstring');
 var logger = require('winston');
 
 
@@ -60,7 +60,9 @@ app.post('/upload', function(req, res){
 
   // store all uploads in the /uploads directory
 
-  var projectPath = path.join(__dirname, '/uploads/', randomstring.generate());
+  var randomString = randomStringGenerator.generate();
+
+  var projectPath = path.join(__dirname, '/uploads/', randomString);
   mkdirSync(projectPath)
   form.uploadDir = path.join(projectPath,'/images');
   mkdirSync(form.uploadDir);
@@ -79,7 +81,7 @@ app.post('/upload', function(req, res){
   // once all the files have been uploaded, send a response to the client
   form.on('end', function() {
     res.end('success');
-    var child = child_process.spawn('python', ['../run.py','--project-path',projectPath],{ stdio: [0, fs.openSync('std.out','w'), fs.openSync('std.err','w')], env : process.env});
+    var child = child_process.spawn('python', ['../run.py','--project-path',projectPath],{ stdio: [0, fs.openSync(randomString+'_std.out','w'), fs.openSync(randomString+'_std.err','w')], env : process.env});
   });
 
   // parse the incoming request containing the form data

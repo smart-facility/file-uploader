@@ -34,3 +34,7 @@ node_modules
 
 # Uploads
 uploads/*
+
+# ODM stderr and stdout
+*_std.out
+*_std.err
